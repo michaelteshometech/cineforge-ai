@@ -88,12 +88,76 @@ export default function CreatePage() {
   useState<File[]>([]);
 
 
+  //Save Prompts:
+  const[prompt, setPrompt] = useState("");
 
-  function generateFilm(){
+
+  /*function generateFilm(){
 
     setLoading(true);
 
+  }*/
+
+async function generateFilm(){
+
+  setLoading(true);
+
+  try {
+
+    const response = await fetch(
+      "/api/generate",
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json",
+        },
+
+        body:JSON.stringify({
+
+          prompt,
+
+          style:selectedStyle,
+
+          duration,
+
+          ratio,
+
+        })
+
+      }
+    );
+
+
+    console.log(
+      "STATUS:",
+      response.status
+    );
+
+
+    const text =
+    await response.text();
+
+
+    console.log(
+      "SERVER RESPONSE:",
+      text
+    );
+
+
+  } catch(error){
+
+    console.error(
+      "ERROR:",
+      error
+    );
+
   }
+
+
+  setLoading(false);
+
+}
 
 
 
@@ -242,6 +306,12 @@ focus:border-orange-500
 
 transition
 "
+
+value={prompt}
+
+onChange={(e) =>
+  setPrompt(e.target.value)
+}
 />
 
 
