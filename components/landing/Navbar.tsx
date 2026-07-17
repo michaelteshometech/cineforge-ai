@@ -4,8 +4,59 @@ import Link from "next/link";
 import Image from "next/image";
 import { Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function Navbar() {
+
+  const supabase = createClient();
+
+  const [user, setUser] = useState<any>(null);
+
+
+  useEffect(() => {
+
+    async function getUser() {
+
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
+
+
+      setUser(user);
+
+    }
+
+
+    getUser();
+
+
+    const {
+      data: {
+        subscription
+      }
+    } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+
+        setUser(
+          session?.user ?? null
+        );
+
+      }
+    );
+
+
+    return () => {
+      subscription.unsubscribe();
+    };
+
+
+  }, [supabase]);
+
+
+
   return (
     <nav
       className="
@@ -34,37 +85,37 @@ export default function Navbar() {
         {/* LOGO */}
 
         <Link 
-        href="/"
-        className="
-        flex
-        items-center
-        gap-4
-        "
+          href="/"
+          className="
+          flex
+          items-center
+          gap-4
+          "
         >
 
           <motion.div
-          initial={{
-            opacity:0,
-            scale:.7,
-            rotate:-180
-          }}
-          animate={{
-            opacity:1,
-            scale:1,
-            rotate:0
-          }}
-          transition={{
-            duration:1
-          }}
+            initial={{
+              opacity:0,
+              scale:.7,
+              rotate:-180
+            }}
+            animate={{
+              opacity:1,
+              scale:1,
+              rotate:0
+            }}
+            transition={{
+              duration:1
+            }}
           >
 
             <Image
-            src="/images/logo/cineforge-logo.png"
-            alt="CineForge"
-            width={58}
-            height={58}
-            priority
-            className="object-contain"
+              src="/images/logo/cineforge-logo.png"
+              alt="CineForge"
+              width={58}
+              height={58}
+              priority
+              className="object-contain"
             />
 
           </motion.div>
@@ -74,23 +125,23 @@ export default function Navbar() {
           <div className="hidden sm:block">
 
             <h1
-            className="
-            text-xl
-            font-semibold
-            tracking-[0.35em]
-            text-white
-            "
+              className="
+              text-xl
+              font-semibold
+              tracking-[0.35em]
+              text-white
+              "
             >
               CINEFORGE
             </h1>
 
 
             <p
-            className="
-            text-xs
-            tracking-[0.5em]
-            text-orange-400
-            "
+              className="
+              text-xs
+              tracking-[0.5em]
+              text-orange-400
+              "
             >
               AI STUDIO
             </p>
@@ -106,58 +157,104 @@ export default function Navbar() {
 
 
         <div
-        className="
-        hidden
-        md:flex
-        items-center
-        gap-10
-        "
+          className="
+          hidden
+          md:flex
+          items-center
+          gap-10
+          "
         >
 
 
           <Link
-          href="/create"
-          className="
-          text-sm
-          tracking-widest
-          text-white/70
-          transition
-
-          hover:text-orange-400
-          "
+            href="/create"
+            className="
+            text-sm
+            tracking-widest
+            text-white/70
+            transition
+            hover:text-orange-400
+            "
           >
             STUDIO
           </Link>
 
 
           <Link
-          href="/pricing"
-          className="
-          text-sm
-          tracking-widest
-          text-white/70
-          transition
-
-          hover:text-orange-400
-          "
+            href="/pricing"
+            className="
+            text-sm
+            tracking-widest
+            text-white/70
+            transition
+            hover:text-orange-400
+            "
           >
             PRICING
           </Link>
 
 
-          <Link
-          href="/account"
-          className="
-          text-sm
-          tracking-widest
-          text-white/70
-          transition
 
-          hover:text-orange-400
-          "
-          >
-            ACCOUNT
-          </Link>
+          {/* AUTH AREA */}
+
+          {user ? (
+
+            <Link
+              href="/account"
+              className="
+              text-sm
+              tracking-widest
+              text-white/70
+              transition
+              hover:text-orange-400
+              "
+            >
+              ACCOUNT
+            </Link>
+
+
+          ) : (
+
+            <div
+              className="
+              flex
+              items-center
+              gap-6
+              "
+            >
+
+              <Link
+                href="/login"
+                className="
+                text-sm
+                tracking-widest
+                text-white/70
+                transition
+                hover:text-orange-400
+                "
+              >
+                LOGIN
+              </Link>
+
+
+              <Link
+                href="/signup"
+                className="
+                text-sm
+                tracking-widest
+                text-orange-400
+                transition
+                hover:text-white
+                "
+              >
+                SIGN UP
+              </Link>
+
+
+            </div>
+
+          )}
+
 
 
 
@@ -165,36 +262,36 @@ export default function Navbar() {
 
             <motion.button
 
-            whileHover={{
-              y:-3,
-            }}
+              whileHover={{
+                y:-3,
+              }}
 
-            whileTap={{
-              scale:.97
-            }}
+              whileTap={{
+                scale:.97
+              }}
 
-            className="
-            flex
-            items-center
-            gap-3
+              className="
+              flex
+              items-center
+              gap-3
 
-            border
-            border-orange-500/60
+              border
+              border-orange-500/60
 
-            px-7
-            py-3
+              px-7
+              py-3
 
-            text-sm
-            tracking-widest
+              text-sm
+              tracking-widest
 
-            text-white
+              text-white
 
-            transition-all
+              transition-all
 
-            hover:bg-orange-500
-            hover:text-black
-            hover:shadow-[0_0_35px_rgba(255,120,0,.6)]
-            "
+              hover:bg-orange-500
+              hover:text-black
+              hover:shadow-[0_0_35px_rgba(255,120,0,.6)]
+              "
 
             >
 
